@@ -13,7 +13,6 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import jakarta.persistence.TypedQuery;
 import java.util.List;
 import mg.itu.ramananjato.tpbanqueramananjato.entities.CompteBancaire;
 
@@ -49,6 +48,13 @@ public class GestionnaireCompte {
         Query query = em.createQuery(requete);
         return query.getResultList();
     }
+    
+    public CompteBancaire getCompte(int id) {
+        String requete = "SELECT c FROM CompteBancaire c WHERE c.id = :id";
+        Query query = em.createQuery(requete);
+        query.setParameter("id", id);
+        return (CompteBancaire) query.getSingleResult();
+    }
 
     public int nbComptes() {
         int accountLenght = 0;
@@ -56,5 +62,23 @@ public class GestionnaireCompte {
         Query query = em.createQuery(s);
         accountLenght = ((Long) query.getSingleResult()).intValue();
         return accountLenght;
+    }
+
+    public void transferer(int idSource, int idDestination, int montant) {
+        CompteBancaire source = getCompte(idSource);
+        CompteBancaire destinataire = getCompte(idDestination);
+        transferer(source, destinataire, montant);
+    }
+
+    public void transferer(CompteBancaire source, CompteBancaire destination,
+            int montant) {
+        source.retirer(montant);
+        destination.deposer(montant);
+        update(source);
+        update(destination);
+    }
+
+    public CompteBancaire update(CompteBancaire compteBancaire) {
+        return em.merge(compteBancaire);
     }
 }
