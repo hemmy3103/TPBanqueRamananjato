@@ -9,6 +9,8 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 import mg.itu.ramananjato.tpbanqueramananjato.ejb.GestionnaireCompte;
+import mg.itu.ramananjato.tpbanqueramananjato.entities.CompteBancaire;
+import mg.itu.ramananjato.tpbanqueramananjato.jsf.util.Util;
 
 /**
  *
@@ -84,9 +86,43 @@ public class TransfertMoney implements Serializable {
      */
     public TransfertMoney() {
     }
-
+    
     public void validerTransfert() {
-        manageAccount.transferer(idSource, idDestinataire, montant);
+        transferer(idSource, idDestinataire, montant);
     }
 
+    public String transferer(int idSource, int idDestination, int montant) {
+        boolean erreur = false;
+        CompteBancaire source = manageAccount.getCompte(idSource);
+        CompteBancaire destinataire = manageAccount.getCompte(idDestination);
+        if (source == null) {
+            Util.messageErreur("Aucun compte avec cet id !", "Aucun compte avec cet id !", "form:source");
+            erreur = true;
+        }
+        if (source == null || destinataire == null) {
+            Util.messageErreur("Aucun compte avec cet id !", "Aucun compte avec cet id !", "form:destinataire");
+            erreur = true;
+        } else {
+            if (source.getSolde() < montant) {
+                Util.messageErreur("Le solde du compte avec l'id " + idSource + " est insuffisant pour ce transfert", "Solde insuffisant !", "form:montant");
+                erreur = true;
+            }
+        }
+        if (erreur) {
+            return null;
+        } else {
+            transferer(source, destinataire, montant);
+            Util.messageInfo("Transfert correctement effectué");
+            return "transfert";
+        }
+    }
+
+
+    public void transferer(CompteBancaire source, CompteBancaire destination,
+            int montant) {
+        source.retirer(montant);
+        destination.deposer(montant);
+        manageAccount.update(source);
+        manageAccount.update(destination);
+    }
 }

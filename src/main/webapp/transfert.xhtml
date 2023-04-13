@@ -19,21 +19,20 @@
                         <h:inputText id="source" size="3" value="#{transfertMoney.idSource}"
                                      required="true"
                                      converterMessage="L'id est un nombre entier"/>
-                        <h:message for="source"/>
+                        <h:message for="source" style="color: red"/>
                         Id compte destinataire : 
                         <h:inputText id="destinataire" size="3" value="#{transfertMoney.idDestinataire}"
                                      required="true"
                                      converterMessage="L'id est un nombre entier"/>
-                        <h:message for="destinataire"/>
+                        <h:message for="destinataire" style="color: red"/>
                         Montant : 
                         <h:inputText id="montant" value="#{transfertMoney.montant}"
                                      required="true"
                                      converterMessage="Le montant doit être un nombre entier"/>
-                        <h:message for="montant"/>
+                        <h:message for="montant" style="color: red"/>
                     </h:panelGrid>
-                    <h:commandButton  id="transfer" value="Valider la transaction" action="#{transfertMoney.validerTransfert}"></h:commandButton>
+                    <h:commandButton  id="transfer" value="Valider la transaction" action="#{transfertMoney.validerTransfert}" />
                 </h:form>
-                <h:messages/>
             </ui:define>
 
         </ui:composition>

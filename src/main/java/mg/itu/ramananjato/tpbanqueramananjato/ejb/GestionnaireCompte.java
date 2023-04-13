@@ -11,10 +11,12 @@ package mg.itu.ramananjato.tpbanqueramananjato.ejb;
 import jakarta.annotation.sql.DataSourceDefinition;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import java.util.List;
 import mg.itu.ramananjato.tpbanqueramananjato.entities.CompteBancaire;
+import mg.itu.ramananjato.tpbanqueramananjato.jsf.util.Util;
 
 @DataSourceDefinition(
         className = "com.mysql.cj.jdbc.MysqlDataSource",
@@ -48,12 +50,16 @@ public class GestionnaireCompte {
         Query query = em.createQuery(requete);
         return query.getResultList();
     }
-    
+
     public CompteBancaire getCompte(int id) {
-        String requete = "SELECT c FROM CompteBancaire c WHERE c.id = :id";
-        Query query = em.createQuery(requete);
-        query.setParameter("id", id);
-        return (CompteBancaire) query.getSingleResult();
+        try {
+            String requete = "SELECT c FROM CompteBancaire c WHERE c.id = :id";
+            Query query = em.createQuery(requete);
+            query.setParameter("id", id);
+            return (CompteBancaire) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public int nbComptes() {
@@ -62,21 +68,7 @@ public class GestionnaireCompte {
         Query query = em.createQuery(s);
         accountLenght = ((Long) query.getSingleResult()).intValue();
         return accountLenght;
-    }
-
-    public void transferer(int idSource, int idDestination, int montant) {
-        CompteBancaire source = getCompte(idSource);
-        CompteBancaire destinataire = getCompte(idDestination);
-        transferer(source, destinataire, montant);
-    }
-
-    public void transferer(CompteBancaire source, CompteBancaire destination,
-            int montant) {
-        source.retirer(montant);
-        destination.deposer(montant);
-        update(source);
-        update(destination);
-    }
+    }  
 
     public CompteBancaire update(CompteBancaire compteBancaire) {
         return em.merge(compteBancaire);

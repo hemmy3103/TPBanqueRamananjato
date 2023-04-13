@@ -21,12 +21,13 @@
         </div>
         <div>
             <div id="left">
-                <ui:insert name="left">
-                    <ui:include src="menu.xhtml"/>
-                </ui:insert>
+                <ui:include src="menu.xhtml"></ui:include>
             </div>
             <div id="content" class="left_content">
                 <ui:insert name="content">Content</ui:insert>
+
+                <h:messages globalOnly="true" infoStyle="color: green;"
+                            errorStyle="display: none;"/>
             </div>
         </div>
     </h:body>
