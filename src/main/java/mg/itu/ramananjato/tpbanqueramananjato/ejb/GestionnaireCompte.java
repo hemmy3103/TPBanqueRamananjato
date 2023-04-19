@@ -63,14 +63,47 @@ public class GestionnaireCompte {
     }
 
     public int nbComptes() {
-        int accountLenght = 0;
         String s = "select count(c) from CompteBancaire c";
         Query query = em.createQuery(s);
-        accountLenght = ((Long) query.getSingleResult()).intValue();
+        int accountLenght = ((Long) query.getSingleResult()).intValue();
         return accountLenght;
-    }  
+    }
 
     public CompteBancaire update(CompteBancaire compteBancaire) {
         return em.merge(compteBancaire);
+    }
+
+    public String transferer(int idSource, int idDestination, int montant) {
+        boolean erreur = false;
+        CompteBancaire source = getCompte(idSource);
+        CompteBancaire destinataire = getCompte(idDestination);
+        if (source == null) {
+            Util.messageErreur("Aucun compte avec cet id !", "Aucun compte avec cet id !", "form:source");
+            erreur = true;
+        }
+        if (source == null || destinataire == null) {
+            Util.messageErreur("Aucun compte avec cet id !", "Aucun compte avec cet id !", "form:destinataire");
+            erreur = true;
+        } else {
+            if (source.getSolde() < montant) {
+                Util.messageErreur("Le solde du compte avec l'id " + idSource + " est insuffisant pour ce transfert", "Solde insuffisant !", "form:montant");
+                erreur = true;
+            }
+        }
+        if (erreur) {
+            return "";
+        } else {
+            transferer(source, destinataire, montant);
+            Util.addFlashInfoMessage("Transfert correctement effectué de "+source.getNom()+" à "+destinataire.getNom()+" avec comme montant : "+montant);
+            return "listeComptes?source="+idSource+"&destinataire="+idDestination+"montant="+montant+"&faces-redirect=true";
+        }
+    }
+
+    public void transferer(CompteBancaire source, CompteBancaire destination,
+            int montant) {
+        source.retirer(montant);
+        destination.deposer(montant);
+        update(source);
+        update(destination);
     }
 }
