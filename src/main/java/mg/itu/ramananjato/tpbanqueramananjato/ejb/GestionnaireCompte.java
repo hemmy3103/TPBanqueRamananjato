@@ -94,8 +94,8 @@ public class GestionnaireCompte {
             return "";
         } else {
             transferer(source, destinataire, montant);
-            Util.addFlashInfoMessage("Transfert correctement effectué de "+source.getNom()+" à "+destinataire.getNom()+" avec comme montant : "+montant);
-            return "listeComptes?source="+idSource+"&destinataire="+idDestination+"montant="+montant+"&faces-redirect=true";
+            Util.addFlashInfoMessage("Transfert correctement effectué de " + source.getNom() + " à " + destinataire.getNom() + " avec comme montant : " + montant);
+            return "listeComptes?source=" + idSource + "&destinataire=" + idDestination + "montant=" + montant + "&faces-redirect=true";
         }
     }
 
@@ -105,5 +105,17 @@ public class GestionnaireCompte {
         destination.deposer(montant);
         update(source);
         update(destination);
+    }
+
+    public String addAccount(String nom, int solde) {
+        try {
+            CompteBancaire c = new CompteBancaire(nom, solde);
+            persist(c);
+            Util.addFlashInfoMessage("Le compte a bien été créé");
+            return "listeComptes?nom=" + nom + "&solde=" + solde + "&faces-redirect=true";
+        } catch (Exception e) {
+            Util.messageErreur("Une erreur est survenue lors de l'insertion du compte" + e.getMessage());
+            return "";
+        }
     }
 }
