@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <body>
+
+        <ui:composition template="./WEB-INF/templates/template_defaut.xhtml">
+
+            <ui:define name="metadata">
+                <f:metadata>  
+                    <f:viewParam name="id" value="#{mouvementBean.id}"  
+                                 required="true"/>  
+                    <f:viewAction action="#{mouvementBean.loadCompte}"/>  
+                </f:metadata>
+            </ui:define>
+
+            <ui:define name="top">
+                Mouvement sur un compte
+            </ui:define>
+
+            <ui:define name="content">
+                <h1>Mouvement sur le compte numéro #{mouvementBean.id}
+                    de #{mouvementBean.compte.nom}</h1>
+
+                <h:form>
+                    <h:panelGrid columns="3">
+                        Nom du titulaire :
+                        <h:outputText value="#{mouvementBean.compte.nom}"/>
+                        <h:panelGroup/>
+                        Type du mouvement :
+                        <h:selectOneRadio id="typeMouvement"
+                                          value="#{mouvementBean.typeMouvement}"
+                                          required="true"
+                                          layout="pageDirection"
+                                          requiredMessage="Vous devez séléctionner un type de mouvement">
+                            <f:selectItem itemValue="ajout" itemLabel="Ajout"/>
+                            <f:selectItem itemValue="retrait" itemLabel="Retrait"/>
+                        </h:selectOneRadio>
+                        <h:message for="typeMouvement" style="color: red"/>
+
+                        Montant du mouvement :
+                        <h:inputText id="montant" value="#{mouvementBean.montant}"
+                                     required="true"
+                                     validator="#{mouvementBean.validateSolde}"/>
+                        <h:message for="montant" style="color: red"/>
+                    </h:panelGrid>
+                    <h:commandButton action="#{mouvementBean.enregistrerMouvement()}"
+                                     value="Enregistrer le mouvement"/>
+                </h:form>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
