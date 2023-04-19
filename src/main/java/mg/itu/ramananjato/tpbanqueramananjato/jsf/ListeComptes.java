@@ -44,4 +44,8 @@ public class ListeComptes implements Serializable {
         Util.addFlashInfoMessage("Compte de " + compteBancaire.getNom() + " supprimé");
         return "listeComptes?faces-redirect=true";
     }
+
+    public String updateAccount(CompteBancaire compteBancaire) {
+        return "updateAccount?id=" + compteBancaire.getId() + "&faces-redirect=true";
+    }
 }

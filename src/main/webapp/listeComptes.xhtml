@@ -47,8 +47,12 @@
                                 <h:outputText value="Opérations"/>
                             </f:facet>
                             <h:commandLink action="#{listeComptes.supprimerCompte(item)}"
-                                           title="Supprimer le compte de #{item.nom}" >
-                                <h:graphicImage name="images/del.png"/>
+                                           title="Supprimer le compte de #{item.nom}">
+                            <h:graphicImage name="images/del.png" style="padding-right: 10px"/>
+                            </h:commandLink>
+                           <h:commandLink action="#{listeComptes.updateAccount(item)}"
+                                           title="Modifier le compte de #{item.nom}">
+                            <h:graphicImage name="images/edit.png" style="padding-right: 10px"/>
                             </h:commandLink>
                         </p:column>
                     </p:dataTable>
